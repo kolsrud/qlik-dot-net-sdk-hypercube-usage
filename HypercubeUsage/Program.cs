@@ -387,7 +387,7 @@ namespace HypercubeUsage
                 "/container1/qHyperCubeDef");
 
             // Get pager for cube in container 1:
-            var thePager = theObject.GetAllHyperCubePagers().Single(pager => pager.Path.Contains("container0"));
+            var thePager = theObject.GetAllHyperCubePagers().First(pager => pager.Path.Contains("container0"));
             // Get Last five rows for that hypercube:
             thePager.CurrentPages = new []{new NxPage{Width = 2, Height = 5}};
             var theLastFiveRows = thePager.GetLastPage().First();
