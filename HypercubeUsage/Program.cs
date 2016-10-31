@@ -39,6 +39,7 @@ namespace HypercubeUsage
         {
             var location = Location.FromUri(new Uri("ws://127.0.0.1:4848"));
             location.AsDirectConnectionToPersonalEdition();
+            location.IsVersionCheckActive = false;
             return location;
         }
 
