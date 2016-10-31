@@ -51,7 +51,6 @@ namespace HypercubeUsage
 
         private static void SetHyperCube(IGenericObject theObject, HyperCubeDef hyperCube)
         {
-            // TODO: Reference section on Properties/Layouts and layout suspension?
             using (theObject.SuspendedLayout)
             {
                 // A property with the name "qHyperCubeDef" will be interpreted by the engine as being of type HyperCubeDef
