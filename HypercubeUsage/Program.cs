@@ -82,8 +82,8 @@ namespace HypercubeUsage
             AddInlineMeasure(theHyperCube, "Sum([Sales Amount])");
             SetHyperCube(theObject, theHyperCube);
             // Columns of data appear in the order they appear in the dimension and measure definition lists
-            // for the hypercube. Dimensions first, then measures. Row 0 will therefore contain the years,
-            // and row 1 will contain the sum of sales.
+            // for the hypercube. Dimensions first, then measures. Column 0 will therefore contain the years,
+            // and column 1 will contain the sum of sales.
             PrintData("Sales per year", theObject,
                 row => String.Format("Year: {0}, Sales: {1}", row[0].Num, row[1].Num));
 
