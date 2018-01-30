@@ -168,17 +168,32 @@ namespace HypercubeUsage
                 SetHyperCube(theObject, hyperCube);
             }
             PrintData("Sales per year and month, sorted", theObject,
-                row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
+                row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
 
-            // Sort by month first, then year.
-            hyperCube.InterColumnSortOrder = new[] { 1, 0 };
+            // Sort by month first, then year, then sales.
+            hyperCube.InterColumnSortOrder = new[] { 1, 0, 2 };
             SetHyperCube(theObject, hyperCube);
 
             PrintData("Sales per year and month, sorted by month then year", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
 
+            // Sort by month first, then year, then sales.
+            hyperCube.InterColumnSortOrder = new[] { 1, 0, 2 };
+            SetHyperCube(theObject, hyperCube);
+
+            PrintData("Sales per year and month, sorted by month then year", theObject,
+                row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
+
+            // Sort by sales (descending), then year, then month.
+            hyperCube.InterColumnSortOrder = new[] { 2, 0, 1 };
+            hyperCube.Measures.First().SortBy = new SortCriteria {SortByNumeric = SortDirection.Descending};
+            SetHyperCube(theObject, hyperCube);
+
+            PrintData("Sales per year and month, sorted by sales (descending)", theObject,
+                row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
+
             // Revert to sort by year first.
-            hyperCube.InterColumnSortOrder = new[] { 0, 1 };
+            hyperCube.InterColumnSortOrder = new[] { 0, 1, 2 };
             SetHyperCube(theObject, hyperCube);
         }
 

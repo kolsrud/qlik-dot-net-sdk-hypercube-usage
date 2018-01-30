@@ -12,7 +12,7 @@ SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
 SalesTable:
 Load
   Floor(Rand()*2)+2014 as Year,
-  Pick(Floor(Rand()*12)+1, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec') as Month,
+  Month(MakeDate(2000, Floor(Rand()*12)+1, 1)) as Month,
   Round(Rand()*10000) as 'Sales Amount',
   Floor(Rand()*2) as EmployeeID
 autogenerate 100;
