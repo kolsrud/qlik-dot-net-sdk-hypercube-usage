@@ -11,8 +11,7 @@ SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
 
 SalesTable:
 Load
-  Floor(Rand()*2)+2014 as Year,
-  Month(MakeDate(2000, Floor(Rand()*12)+1, 1)) as Month,
+  MakeDate(2016+Floor(Rand()*2), 1+Floor(Rand()*12, 1)) as TimeStamp,
   Round(Rand()*10000) as 'Sales Amount',
   Floor(Rand()*2) as EmployeeID
 autogenerate 100;
@@ -23,5 +22,10 @@ EmployeeID, 'Sales Rep Name',
 0, 'Amalia Craig',
 1, 'Amanda Honda'";
 
-YearMonthTable:
-Load Year, Month, Year&'-'&Month as YearMonth resident SalesTable;
+DateTimeTable:
+Load
+  TimeStamp,
+  Year(TimeStamp) as Year,
+  Month(TimeStamp) as Month,
+  Year(TimeStamp)&'-'&Month(TimeStamp)as YearMonth
+resident SalesTable;
