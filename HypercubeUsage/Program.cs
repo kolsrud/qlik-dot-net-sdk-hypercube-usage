@@ -199,22 +199,22 @@ namespace HypercubeUsage
 
         private static void BasicSelection(IApp theApp, IGenericObject theObject)
         {
-            // Print data for year 2014 only.
-            theApp.GetField("Year").Select("2014");
-            PrintData("Sales for year 2014 only", theObject,
+            // Print data for year 2016 only.
+            theApp.GetField("Year").Select("2016");
+            PrintData("Sales for year 2016 only", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
 
             var salesRepField = theApp.GetField("Sales Rep Name");
-            // Print data for year 2014 only, and for sales rep "Amalia Craig" only.
+            // Print data for year 2016 only, and for sales rep "Amalia Craig" only.
             salesRepField.Select("Amalia Craig");
-            PrintData("Sales for year 2014 and sales rep Amalia Craig", theObject,
+            PrintData("Sales for year 2016 and sales rep Amalia Craig", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
 
             // Switch to sales rep "Amanda Honda"
             salesRepField.Clear();
             salesRepField.Select("Amanda Honda");
-            // Print data for year 2014 only, and for sales rep "Amanda Honda" only.
-            PrintData("Sales for all years", theObject,
+            // Print data for year 2016 only, and for sales rep "Amanda Honda" only.
+            PrintData("Sales for year 2016 and sales rep Amanda Honda", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
 
             // Clear selections and print data for all years and sales reps.
@@ -246,9 +246,9 @@ namespace HypercubeUsage
             PrintGroupedData("Stacked, Sales per Year", theObject);
             // When selecting a single field of the top dimension of the stack, the hypercube
             // will use the next dimension of the stack instead.
-            theApp.GetField("Year").Select("2014");
+            theApp.GetField("Year").Select("2016");
             // Prints sales per month for the selected year.
-            PrintGroupedData("Stacked, Sales per Month for selected Year", theObject);
+            PrintGroupedData("Stacked, Sales per Month for selected Year 2016", theObject);
 
             // Clear year selection.
             theApp.ClearAll();
