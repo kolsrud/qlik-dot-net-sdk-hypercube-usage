@@ -105,11 +105,22 @@ namespace HypercubeUsage
             SetHyperCube(theObject, theHyperCube);
             PrintData("Sales per year and month using library measure for sales", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Num));
-        }
 
-        // An inline dimension is a dimension that is directly defined in the HyperCubeDef structure.
-        // The alternative is to use dimensions predefined in the library.
-        private static void AddInlineDimension(HyperCubeDef theHyperCube, string field)
+			// Use calculated dimension.
+			// Calculated dimensions are added just like fields, except that they require a leading '='.
+			theHyperCube.Dimensions = Enumerable.Empty<NxDimension>();
+	        theHyperCube.Measures = Enumerable.Empty<NxMeasure>();
+			AddInlineDimension(theHyperCube, "=Year(TimeStamp)&'-'&Month(TimeStamp)");
+	        AddInlineDimension(theHyperCube, "YearMonth");
+			AddInlineMeasure(theHyperCube, "Sum([Sales Amount])");
+	        SetHyperCube(theObject, theHyperCube);
+	        PrintData("Sales per year and Month (calculated dimension)", theObject,
+		        row => String.Format("=Year(TimeStamp)&'-'&Month(TimeStamp): {0}, YearMonth: {1}, Sales: {2}", row[0].Text, row[1].Text, row[2].Num));
+		}
+
+		// An inline dimension is a dimension that is directly defined in the HyperCubeDef structure.
+		// The alternative is to use dimensions predefined in the library.
+		private static void AddInlineDimension(HyperCubeDef theHyperCube, string field)
         {
             var inlineDimension = new NxInlineDimensionDef { FieldDefs = new[] { field } };
             // A dimension directly defined in the hypercube definition. The alternative would be to
@@ -139,9 +150,18 @@ namespace HypercubeUsage
 
         private static void ConfigureFormating(IGenericObject theObject)
         {
-            // Use string literal for month by using the Text representation instead of the numeric representation
-            // for the month column.
-            PrintData("String literal for months", theObject,
+	        var theHyperCube = theObject.Properties.Get<HyperCubeDef>("qHyperCubeDef");
+	        // List Sales per year (1 Dimension, 1 Measure)
+	        theHyperCube.Dimensions = Enumerable.Empty<NxDimension>();
+	        theHyperCube.Measures = Enumerable.Empty<NxMeasure>();
+	        AddInlineDimension(theHyperCube, "Year");
+	        AddInlineDimension(theHyperCube, "Month");
+			AddInlineMeasure(theHyperCube, "Sum([Sales Amount])");
+	        SetHyperCube(theObject, theHyperCube);
+
+			// Use string literal for month by using the Text representation instead of the numeric representation
+			// for the month column.
+			PrintData("String literal for months", theObject,
                 row => String.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Num));
 
             var hyperCube = theObject.Properties.Get<HyperCubeDef>("qHyperCubeDef");
