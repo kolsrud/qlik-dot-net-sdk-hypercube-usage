@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HypercubeUsage.Properties;
 using Qlik.Engine;
@@ -84,8 +85,11 @@ namespace HypercubeUsage
             // Columns of data appear in the order they appear in the dimension and measure definition lists
             // for the hypercube. Dimensions first, then measures. Column 0 will therefore contain the years,
             // and column 1 will contain the sum of sales.
-            PrintData("Sales per year", theObject,
-                row => string.Format("Year: {0}, Sales: {1}", row[0].Num, row[1].Num));
+            Console.WriteLine("*** Sales per year");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Sales: {1}", row[0].Num, row[1].Num);
+            }
 
             // List sales per year and month
             AddInlineDimension(theHyperCube, "Month");
@@ -93,8 +97,11 @@ namespace HypercubeUsage
             // Adding a dimension increases the number of columns in the returned data. The new dimension
             // will appear on position 1 (after the year) as AddInlineDimension appends dimensions to the
             // end of the dimension list.
-            PrintData("Sales per year and month", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Num));
+            Console.WriteLine("*** Sales per year and month");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Num);
+            }
 
             // Use predefined library version of the measure.
             // Get the ID of the measure with the title "Sales" by looking up the measures in the measure list.
@@ -103,8 +110,11 @@ namespace HypercubeUsage
             var measureId = theMeasureList.Items.First(item => item.Data.Title == "Sales").Info.Id;
             AddLibraryMeasure(theHyperCube, measureId);
             SetHyperCube(theObject, theHyperCube);
-            PrintData("Sales per year and month using library measure for sales", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Num));
+            Console.WriteLine("*** Sales per year and month using library measure for sales");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Num);
+            }
 
             // Use calculated dimension.
             // Calculated dimensions are added just like fields, except that they require a leading '='.
@@ -114,9 +124,11 @@ namespace HypercubeUsage
             AddInlineDimension(theHyperCube, "YearMonth");
             AddInlineMeasure(theHyperCube, "Sum([Sales Amount])");
             SetHyperCube(theObject, theHyperCube);
-            PrintData("Sales per year and Month (calculated dimension)", theObject,
-                row => string.Format("=Year(TimeStamp)&'-'&Month(TimeStamp): {0}, YearMonth: {1}, Sales: {2}",
-                    row[0].Text, row[1].Text, row[2].Num));
+            Console.WriteLine("*** Sales per year and Month (calculated dimension)");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("=Year(TimeStamp)&'-'&Month(TimeStamp): {0}, YearMonth: {1}, Sales: {2}", row[0].Text, row[1].Text, row[2].Num);
+            }
         }
 
         // An inline dimension is a dimension that is directly defined in the HyperCubeDef structure.
@@ -160,18 +172,24 @@ namespace HypercubeUsage
 			AddInlineMeasure(theHyperCube, "Sum([Sales Amount])");
 	        SetHyperCube(theObject, theHyperCube);
 
-			// Use string literal for month by using the Text representation instead of the numeric representation
-			// for the month column.
-			PrintData("String literal for months", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Num));
+            // Use string literal for month by using the Text representation instead of the numeric representation
+            // for the month column.
+            Console.WriteLine("*** String literal for months");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Num);
+            }
 
             var hyperCube = theObject.Properties.Get<HyperCubeDef>("qHyperCubeDef");
             // Format sales as USD
             var measure = hyperCube.Measures.Single();
             measure.Def.NumFormat = new FieldAttributes { Type = FieldAttrType.MONEY, nDec = 2, Dec = ".", UseThou = 1, Thou = "," };
             SetHyperCube(theObject, hyperCube);
-            PrintData("Use USD as currency", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
+            Console.WriteLine("*** Use USD as currency");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
         }
 
         private static void ConfigureSorting(IGenericObject theObject)
@@ -188,30 +206,32 @@ namespace HypercubeUsage
                 }
                 SetHyperCube(theObject, hyperCube);
             }
-            PrintData("Sales per year and month, sorted", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
+            Console.WriteLine("*** Sales per year and month, sorted");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
 
             // Sort by month first, then year, then sales.
             hyperCube.InterColumnSortOrder = new[] { 1, 0, 2 };
             SetHyperCube(theObject, hyperCube);
 
-            PrintData("Sales per year and month, sorted by month then year", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
-
-            // Sort by month first, then year, then sales.
-            hyperCube.InterColumnSortOrder = new[] { 1, 0, 2 };
-            SetHyperCube(theObject, hyperCube);
-
-            PrintData("Sales per year and month, sorted by month then year", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
+            Console.WriteLine("*** Sales per year and month, sorted by month then year");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text);
+            }
 
             // Sort by sales (descending), then year, then month.
             hyperCube.InterColumnSortOrder = new[] { 2, 0, 1 };
             hyperCube.Measures.First().SortBy = new SortCriteria {SortByNumeric = SortDirection.Descending};
             SetHyperCube(theObject, hyperCube);
 
-            PrintData("Sales per year and month, sorted by sales (descending)", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text));
+            Console.WriteLine("*** Sales per year and month, sorted by sales (descending)");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Num, row[2].Text);
+            }
 
             // Revert to sort by year first.
             hyperCube.InterColumnSortOrder = new[] { 0, 1, 2 };
@@ -222,27 +242,38 @@ namespace HypercubeUsage
         {
             // Print data for year 2016 only.
             theApp.GetField("Year").Select("2016");
-            PrintData("Sales for year 2016 only", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
+            Console.WriteLine("*** Sales for year 2016 only");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
 
             var salesRepField = theApp.GetField("Sales Rep Name");
             // Print data for year 2016 only, and for sales rep "Amalia Craig" only.
             salesRepField.Select("Amalia Craig");
-            PrintData("Sales for year 2016 and sales rep Amalia Craig", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
+            Console.WriteLine("*** Sales for year 2016 and sales rep Amalia Craig");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
 
             // Switch to sales rep "Amanda Honda"
             salesRepField.Clear();
             salesRepField.Select("Amanda Honda");
             // Print data for year 2016 only, and for sales rep "Amanda Honda" only.
-            PrintData("Sales for year 2016 and sales rep Amanda Honda", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
+            Console.WriteLine("*** Sales for year 2016 and sales rep Amanda Honda");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
 
             // Clear selections and print data for all years and sales reps.
             theApp.ClearAll();
-            PrintData("Sales for all years", theObject,
-                row => string.Format("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text));
-
+            Console.WriteLine("*** Sales for all years");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine("Year: {0}, Month: {1}, Sales: {2}", row[0].Num, row[1].Text, row[2].Text);
+            }
         }
 
         private static void GroupedDimensions(IApp theApp, IGenericObject theObject)
@@ -305,14 +336,22 @@ namespace HypercubeUsage
             // Get data for a page with width 2 and height 5:
             var firstPage = new[] { new NxPage { Top = 0, Left = 0, Width = 2, Height = 5 } };
             var firstData = pager.GetData(firstPage).Single();
-            PrintPage("First page:", firstData,  row => string.Format("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text));
+            Console.WriteLine("*** First page");
+            foreach (var row in firstData.Matrix)
+            {
+                Console.WriteLine("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text);
+            }
 
             // Print all other pages:
             var pageNr = 1;
             while (!pager.OutsideEdge.Single())
             {
                 var nextData = pager.GetNextPage().Single();
-                PrintPage("Page nr: " + pageNr, nextData, row => string.Format("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text));
+                Console.WriteLine("*** Page nr: " + pageNr);
+                foreach (var row in nextData.Matrix)
+                {
+                    Console.WriteLine("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text);
+                }
                 pageNr++;
             }
 
@@ -321,7 +360,11 @@ namespace HypercubeUsage
             firstPage = new[] { new NxPage { Top = 0, Left = 0, Width = 2, Height = 5 } };
             foreach(var page in pager.IteratePages(firstPage, Pager.Next))
             {
-                PrintPage("Page nr: " + pageNr, page.First(), row => string.Format("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text));
+                Console.WriteLine("*** Page nr: " + pageNr);
+                foreach (var row in page.Single().Matrix)
+                {
+                    Console.WriteLine("YearMonth: {0}, Sales: {1}", row[0].Text, row[1].Text);
+                }
                 pageNr++;                
             }
 
@@ -335,40 +378,16 @@ namespace HypercubeUsage
             }
             // Print first page of bar chart data:
             var firstBarchartData = barChart.HyperCubePager.GetData();
-            PrintPage("First page of bar chart:", firstBarchartData.Single(),
-                row => string.Format("YearMonth: {0}", row[0].Text)
-                );
+            Console.WriteLine("*** First page of bar chart:");
+            foreach (var row in firstBarchartData.Single().Matrix)
+            {
+                Console.WriteLine("YearMonth: {0}", row[0].Text);
+            }
         }
 
         private static ISheet GetOrCreateSheet(IApp theApp, string sheetId)
         {
             return theApp.GetSheet("sheetId") ?? theApp.CreateSheet(sheetId);
-        }
-
-        // Print all data for the hypercube. The argument function is used to print individual rows of data.
-        private static void PrintData(string header, IGenericObject theObject, Func<NxCellRows, string> format, string hyperCubePath = "/qHyperCubeDef")
-        {
-            // Get the data for the hypercube. 
-            var theData = theObject.GetHyperCubeData(hyperCubePath, new[] { LargePage }).First();
-            // Print the page using the format function.
-            PrintPage(header, theData, format);
-        }
-
-        private static void PrintPage(string header, NxDataPage theData, Func<NxCellRows, string> format)
-        {
-            Console.WriteLine("*** " + header);
-            foreach (var row in theData.Matrix)
-            {
-                // The column count is equal to the sum of the number of dimensions and the number of measures.
-                Console.WriteLine(format(row));
-            }
-        }
-
-        // Represents a page large enough to fit all data used in the example. See section on paging for examples
-        // of how to work with pages and page sizes.
-        public static NxPage LargePage
-        {
-            get { return new NxPage {Top = 0, Left = 0, Width = 10, Height = 100}; }
         }
 
         private static void PrintGroupedData(string header, IGenericObject theObject)
@@ -381,8 +400,11 @@ namespace HypercubeUsage
             var isYear = dimensionInfo.GroupPos == 0;
             // If the current group position is 0, then the dimension represents a year, if it is 1, then it
             // represents a month. Use Num property of cell for Year and Text for month.
-            PrintData(header, theObject,
-                row => string.Format(template, isYear ? (object) row[0].Num : row[0].Text, row[1].Text));
+            Console.WriteLine(header);
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/qHyperCubeDef")))
+            {
+                Console.WriteLine(template, isYear ? row[0].Num.ToString() : row[0].Text, row[1].Text);
+            }
         }
 
         private static void MultipleHyperCubesExamples(IApp theApp)
@@ -411,25 +433,37 @@ namespace HypercubeUsage
             }
 
             // Print data for first hypercube
-            PrintData("Sales per Month", theObject,
-                row => string.Format("Month: {0}, Sales: {1}", row[0].Text, row[1].Text),
-                // Path to hypercube 0. (Name of container property followed by hypercube property.)
-                "/container0/qHyperCubeDef");
+            Console.WriteLine("*** Sales per Month");
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager("/container0/qHyperCubeDef")))
+            {
+                Console.WriteLine("Month: {0}, Sales: {1}", row[0].Text, row[1].Text);
+            }
 
             // Print data for second hypercube
-            PrintData("Sales per Year", theObject,
-                row => string.Format("Year: {0}, Sales: {1}", row[0].Num, row[1].Text),
-                // Path to hypercube 1. (Name of container property followed by hypercube property.)
-                "/container1/qHyperCubeDef");
+            Console.WriteLine("*** Sales per Year");
+            // Path to hypercube 1. (Name of container property followed by hypercube property.)
+            var cubePath = "/container1/qHyperCubeDef";
+            foreach (var row in GetAllRows(theObject.GetHyperCubePager(cubePath)))
+            {
+                Console.WriteLine("Year: {0}, Sales: {1}", row[0].Num, row[1].Text);
+            }
 
             // Get pager for cube in container 1:
             var thePager = theObject.GetAllHyperCubePagers().First(pager => pager.Path.Contains("container0"));
             // Get Last five rows for that hypercube:
             thePager.CurrentPages = new []{new NxPage{Width = 2, Height = 5}};
-            var theLastFiveRows = thePager.GetLastPage().First();
-            PrintPage("The last five rows of hypercube in container0:", theLastFiveRows,
-                row => string.Format("Month: {0}, Sales: {1}", row[0].Text, row[1].Text)
-                );
+            var theLastFiveRows = thePager.GetLastPage().First().Matrix;
+            Console.WriteLine("*** The last five rows of hypercube in container0");
+            foreach (var row in theLastFiveRows)
+            {
+                Console.WriteLine("Month: {0}, Sales: {1}", row[0].Text, row[1].Text);
+            }
+        }
+
+        private static IEnumerable<INxCell[]> GetAllRows(DataPager pager, int pageHeight = 10)
+        {
+            var startPage = new[] { new NxPage { Height = pageHeight, Width = pager.NumberOfColumns } };
+            return pager.IteratePages(startPage, Pager.Next).SelectMany(pages => pages.Single().Matrix).Select(row => row.ToArray());
         }
     }
 }
