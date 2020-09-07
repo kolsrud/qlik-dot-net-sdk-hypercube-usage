@@ -40,7 +40,6 @@ namespace HypercubeUsage
         {
             var location = Location.FromUri(new Uri("ws://127.0.0.1:4848"));
             location.AsDirectConnectionToPersonalEdition();
-            location.IsVersionCheckActive = false;
             return location;
         }
 
@@ -107,7 +106,7 @@ namespace HypercubeUsage
             // Get the ID of the measure with the title "Sales" by looking up the measures in the measure list.
             theHyperCube.Measures = Enumerable.Empty<NxMeasure>();
             var theMeasureList = theApp.GetMeasureList();
-            var measureId = theMeasureList.Items.First(item => item.Data.Title == "Sales").Info.Id;
+            var measureId = theMeasureList.Layout.MeasureList.Items.First(item => item.Data.Title == "Sales").Info.Id;
             AddLibraryMeasure(theHyperCube, measureId);
             SetHyperCube(theObject, theHyperCube);
             Console.WriteLine("*** Sales per year and month using library measure for sales");
@@ -367,27 +366,6 @@ namespace HypercubeUsage
                 }
                 pageNr++;                
             }
-
-            // Accessing pager for client object hypercubes:
-            var theSheet = GetOrCreateSheet(theApp, "mySheet");
-            var barChart = theSheet.CreateBarchart();
-            // Set hypercube to sales per year and month
-            using (barChart.SuspendedLayout)
-            {
-                barChart.Properties.HyperCubeDef = salesPerYearMonthHc.CloneAs<VisualizationHyperCubeDef>();
-            }
-            // Print first page of bar chart data:
-            var firstBarchartData = barChart.HyperCubePager.GetData();
-            Console.WriteLine("*** First page of bar chart:");
-            foreach (var row in firstBarchartData.Single().Matrix)
-            {
-                Console.WriteLine("YearMonth: {0}", row[0].Text);
-            }
-        }
-
-        private static ISheet GetOrCreateSheet(IApp theApp, string sheetId)
-        {
-            return theApp.GetSheet("sheetId") ?? theApp.CreateSheet(sheetId);
         }
 
         private static void PrintGroupedData(string header, IGenericObject theObject)
