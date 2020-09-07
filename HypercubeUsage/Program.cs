@@ -4,7 +4,6 @@ using System.Linq;
 using HypercubeUsage.Properties;
 using Qlik.Engine;
 using Qlik.Sense.Client;
-using Qlik.Sense.Client.Visualizations;
 
 namespace HypercubeUsage
 {

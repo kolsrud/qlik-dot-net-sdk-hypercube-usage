@@ -19,7 +19,7 @@ namespace HypercubeUsage.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -74,8 +74,9 @@ namespace HypercubeUsage.Properties {
         ///
         ///SalesTable:
         ///Load
-        ///  Floor(Rand()*2)+2014 as Year,
-        ///  Pick(Floor(Rand()*12)+1, &apos;Jan&apos;, &apos;Feb&apos;, &apos;Mar&apos;, &apos;Apr&apos;, &apos;May&apos;, &apos;Jun&apos;, &apos;Jul&apos;, &apos;Aug&apos;, &apos;Sep&apos;, &apos;Oct&apos;, &apos;No [rest of string was truncated]&quot;;.
+        ///  MakeDate(2016+Floor(Rand()*2), 1+Floor(Rand()*12, 1)) as TimeStamp,
+        ///  Round(Rand()*10000) as &apos;Sales Amount&apos;,
+        ///  Floor(Rand()*2) as [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoadScript {
             get {
