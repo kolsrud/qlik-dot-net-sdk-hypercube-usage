@@ -24,9 +24,10 @@ namespace HypercubeUsage
         {
             var theApp = hub.CreateSessionApp().Return;
             theApp.SetScript(Resources.LoadScript);
-            theApp.CreateMeasure("Sales",
+            theApp.CreateGenericMeasure(
                 new MeasureProperties
                 {
+                    Info = new NxInfo{Type = "measure"},
                     Measure = new NxLibraryMeasureDef {Def = "Sum([Sales Amount])"},
                     MetaDef = new MetaAttributesDef {Title = "Sales"}
                 }
@@ -397,9 +398,9 @@ namespace HypercubeUsage
 
             // Add the hypercubes to containers. The containers are used to separate the two
             // qHyperCubeDef properties in the property tree of the object.
-            var hcContainer0 = new DynamicStructure();
+            var hcContainer0 = new AbstractStructure();
             hcContainer0.Set("qHyperCubeDef", salesPerMonthHc);
-            var hcContainer1 = new DynamicStructure();
+            var hcContainer1 = new AbstractStructure();
             hcContainer1.Set("qHyperCubeDef", salesPerYearHc);
 
             // Add containers to object.
